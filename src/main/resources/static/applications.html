@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Applications</title>
+</head>
+<body>
+<nav>
+  <a href="index.html">Home</a> |
+  <a href="vacancies.html">Vacancies</a> |
+  <a href="companies.html">Companies</a> |
+  <a href="candidates.html">Candidates</a>
+</nav>
+
+<h1>Applications</h1>
+<div id="applicationsList"></div>
+
+<script>
+  fetch('/applications')
+    .then(response => response.json())
+    .then(data => {
+      const list = document.getElementById('applicationsList');
+      data.forEach(a => {
+        const div = document.createElement('div');
+        div.textContent = a.applicationId + ' - ' + a.applicationStatus;
+        list.appendChild(div);
+      });
+    })
+    .catch(err => console.error('Error fetching applications:', err));
+</script>
+</body>
+</html>
