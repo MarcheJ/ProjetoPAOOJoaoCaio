@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Busca Emprego PAOO - Home</title>
+</head>
+<body>
+  <h1>Vagas Disponíveis</h1>
+  <nav>
+    <a href="vacancies.html">Vacancies</a> |
+    <a href="companies.html">Companies</a> |
+    <a href="candidates.html">Candidates</a> |
+    <a href="applications.html">Applications</a>
+  </nav>
+  <ul id="vacanciesList"></ul>
+
+  <script>
+    fetch('/vacancies')
+      .then(response => response.json())
+      .then(data => {
+        const list = document.getElementById('vacanciesList');
+        data.forEach(vacancy => {
+          const li = document.createElement('li');
+          li.textContent = vacancy.title + ' - ' + vacancy.location;
+          list.appendChild(li);
+        });
+      })
+      .catch(err => console.error('Erro ao buscar vagas', err));
+  </script>
+</body>
+</html>

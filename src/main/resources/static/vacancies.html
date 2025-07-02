@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Vacancies</title>
+</head>
+<body>
+<nav>
+  <a href="index.html">Home</a> |
+  <a href="companies.html">Companies</a> |
+  <a href="candidates.html">Candidates</a> |
+  <a href="applications.html">Applications</a>
+</nav>
+
+<h1>Vacancies</h1>
+<div id="vacanciesList"></div>
+
+<script>
+  fetch('/vacancies')
+    .then(response => response.json())
+    .then(data => {
+      const list = document.getElementById('vacanciesList');
+      data.forEach(v => {
+        const div = document.createElement('div');
+        div.textContent = v.title + ' - ' + v.location;
+        list.appendChild(div);
+      });
+    })
+    .catch(err => console.error('Error fetching vacancies:', err));
+</script>
+</body>
+</html>
