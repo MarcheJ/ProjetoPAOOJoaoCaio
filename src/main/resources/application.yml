@@ -2,7 +2,7 @@ spring:
   application:
     name: buscaEmpregoPAOO
   datasource:
-    url: jdbc:postgresql://localhost:5434/buscaEmpregoPAOO
+    url: jdbc:postgresql://localhost:5432/buscaEmpregoPAOO
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

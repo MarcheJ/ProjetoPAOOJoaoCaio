@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Curriculum Generator</title>
+  <link rel="stylesheet" href="/css/curriculum.css"> 
+</head>
+<body>
+  <h1>Generate your Curriculum</h1>
+  <form id="curriculumForm">
+    <label>Full Name:</label>
+    <input type="text" name="fullName" placeholder="Full Name" required />
+    <br>
+    <label>Email:</label>
+    <input type="email" name="email" placeholder="Email" required />
+    <br>
+    <label>Phone:</label>
+    <input type="text" name="phone" placeholder="Phone" required />
+    <br>
+    <label>Professional Objective:</label>
+    <textarea name="professionalObjective" placeholder="Professional Objective"></textarea>
+    <br>
+    <label>Education:</label>
+    <textarea name="education" placeholder="Education"></textarea>
+    <br>
+    <label>Work Experience:</label>
+    <textarea name="experience" placeholder="Work Experience"></textarea>
+    <br>
+    <label>Skills:</label>
+    <textarea name="skills" placeholder="Skills"></textarea>
+    <br>
+    <label>Area:</label>
+    <input type="text" name="area" placeholder="e.g., backend, frontend, data" required />
+    <br>
+    <button type="submit">Generate</button>
+  </form>
+  
+  <div id="responseArea"></div>
+
+  <script>
+    document.getElementById('curriculumForm').addEventListener('submit', async (evt) => {
+      evt.preventDefault();
+      const formData = new FormData(evt.target);
+      const json = Object.fromEntries(formData.entries());
+      
+      const response = await fetch('/curriculum/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(json),
+      });
+      
+      const result = await response.json();
+      document.getElementById('responseArea').textContent = JSON.stringify(result);
+    });
+  </script>
+</body>
+</html>

@@ -45,18 +45,16 @@
     return container;
   }
 
-  function loadCandidates() {
-    fetch('/candidates')
-      .then(response => response.json())
-      .then(data => {
-        const list = document.getElementById('candidatesList');
-        list.innerHTML = ''; // Clear existing list
-        data.forEach(c => {
-          const div = renderCandidate(c);
-          list.appendChild(div);
-        });
-      })
-      .catch(err => console.error('Error fetching candidates:', err));
+  async function loadCandidates() {
+    const response = await fetch('/candidates');
+    const data = await response.json();
+    console.log(data);
+    const list = document.getElementById('candidatesList');
+    list.innerHTML = ''; // Clear existing list
+    data.forEach(c => {
+      const div = renderCandidate(c);
+      list.appendChild(div);
+    });
   }
 
   document.getElementById('candidateForm').addEventListener('submit', e => {
@@ -82,8 +80,10 @@
     .catch(err => console.error('Error creating candidate:', err));
   });
 
-  // Load candidates on initial page load
-  loadCandidates();
+  document.addEventListener('DOMContentLoaded', loadCandidates);
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
