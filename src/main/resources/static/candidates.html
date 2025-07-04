@@ -26,12 +26,10 @@
 
 <div id="candidateError" style="color: #c00; text-align: center; margin: 10px 0;"></div>
 
-<!-- Botão de logout -->
 <div id="logoutArea" style="text-align:center; margin-bottom:15px; display:none;">
   <button id="logoutBtn" type="button">Sair</button>
 </div>
 
-<!-- Login Interface -->
 <div id="loginArea" style="max-width:400px;margin:20px auto;display:none;">
   <h2>Login</h2>
   <form id="loginForm">
@@ -103,14 +101,6 @@
       <strong>Tipo:</strong> ${c.role}
     `;
 
-    const resumeButton = document.createElement('button');
-    resumeButton.textContent = 'Gerar Currículo';
-    resumeButton.addEventListener('click', () => {
-      fetch(`/buscaEmpregoPAOO/api/candidates/${c.id}/resume`)
-        .then(() => alert('Geração de currículo iniciada.'))
-        .catch(err => console.error('Falha ao gerar currículo:', err));
-    });
-    container.appendChild(resumeButton);
 
     return container;
   }
@@ -196,14 +186,12 @@
     })
     .then(async response => {
       if (response.ok) {
-        // Após criar, busque o candidato pelo e-mail para salvar o id
         const email = payload.email;
         const res = await fetch(`/buscaEmpregoPAOO/api/candidates`);
         if (res.ok) {
           const all = await res.json();
           const found = all.find(c => c.email === email);
           if (found) {
-            // Não faz login automático, apenas mostra tela de login
             document.getElementById('candidateForm').style.display = 'none';
             document.getElementById('loginArea').style.display = '';
             document.getElementById('loginEmail').value = email;
@@ -231,7 +219,6 @@
     });
   });
 
-  // Login handler
   document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     document.getElementById('loginError').textContent = '';
@@ -257,7 +244,6 @@
     }
   });
 
-  // Mostra o formulário de cadastro se hash for #create ou se clicar no botão "Criar Conta"
   function showCreateForm() {
     document.getElementById('loginArea').style.display = 'none';
     document.getElementById('candidateForm').style.display = '';
@@ -266,12 +252,10 @@
 
   document.getElementById('showCreateBtn').onclick = showCreateForm;
 
-  // Se acessar com #create na URL, mostra direto o formulário de cadastro
   if (window.location.hash === '#create') {
     showCreateForm();
   }
 
-  // Logout handler
   document.getElementById('logoutBtn').onclick = function() {
     clearUserFromLocalStorage();
     document.getElementById('candidatesList').innerHTML = '';

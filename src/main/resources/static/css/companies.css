@@ -1,0 +1,61 @@
+#companyForm {
+  display: none;
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px #0001;
+}
+#addCompanyBtn {
+  font-size: 1.3em;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+#addCompanyBtn:hover {
+  background: #217dbb;
+}
+.company-accordion {
+  max-width: 600px;
+  margin: 10px auto;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px #0001;
+  background: #fff;
+  overflow: hidden;
+}
+.company-header {
+  cursor: pointer;
+  padding: 14px 18px;
+  font-weight: bold;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  outline: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s;
+}
+.company-header:hover {
+  background: #217dbb;
+}
+.company-body {
+  display: none;
+  padding: 14px 18px;
+  background: #f9f9f9;
+  color: #222;
+  border-top: 1px solid #eee;
+  font-size: 1rem;
+}
+.company-accordion.open .company-body {
+  display: block;
+}

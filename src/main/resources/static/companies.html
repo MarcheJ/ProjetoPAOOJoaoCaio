@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Companies</title>
   <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/companies.css">
 </head>
 <body>
 <nav>
@@ -22,10 +23,10 @@
 </div>
 
 <h1>Companies</h1>
-<div id="companiesList"></div>
+<button id="addCompanyBtn" title="Nova empresa" onclick="toggleCompanyForm()" style="display:none;">+</button>
 
 <form id="companyForm" style="display:none;">
-  <label>Name:</label>
+  <label>Nome:</label>
   <input type="text" id="companyName" required>
   <br>
   <label>CNPJ:</label>
@@ -34,30 +35,77 @@
   <label>Email:</label>
   <input type="email" id="companyEmail" required>
   <br>
-  <label>Phone:</label>
+  <label>Telefone:</label>
   <input type="text" id="companyPhone">
   <br>
   <label>Website:</label>
   <input type="text" id="companyWebsite">
   <br>
-  <label>Address:</label>
+  <label>Endereço:</label>
   <input type="text" id="companyAddress" required>
   <br>
-  <button type="submit">Create Company</button>
+  <button type="submit">Criar Empresa</button>
 </form>
 
 <div id="companyError" style="color: #c00; text-align: center; margin: 10px 0;"></div>
 
+<div id="companiesList"></div>
+
 <script>
+  function toggleCompanyForm() {
+    const form = document.getElementById('companyForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // Exibe botão e formulário só para RH
+  function showRhControls() {
+    const role = localStorage.getItem('role');
+    const addBtn = document.getElementById('addCompanyBtn');
+    if (role === 'RH') {
+      addBtn.style.display = '';
+    } else {
+      addBtn.style.display = 'none';
+      document.getElementById('companyForm').style.display = 'none';
+    }
+  }
+
+  function createCompanyAccordion(c) {
+    const container = document.createElement('div');
+    container.className = 'company-accordion';
+
+    // Header
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'company-header';
+    header.textContent = `${c.name} - ${c.address} - ${c.cnpj}`;
+    header.addEventListener('click', () => {
+      container.classList.toggle('open');
+    });
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'company-body';
+    body.innerHTML = `
+      <strong>Email:</strong> ${c.email}<br>
+      <strong>Telefone:</strong> ${c.phone || '-'}<br>
+      <strong>Website:</strong> ${c.website || '-'}<br>
+      <strong>Endereço:</strong> ${c.address}<br>
+      <strong>CNPJ:</strong> ${c.cnpj}
+    `;
+
+    container.appendChild(header);
+    container.appendChild(body);
+    return container;
+  }
+
   async function loadCompanies() {
     const response = await fetch('/buscaEmpregoPAOO/api/companies');
     const data = await response.json();
     const list = document.getElementById('companiesList');
     list.innerHTML = '';
     data.forEach(c => {
-      const div = document.createElement('div');
-      div.textContent = c.name + ' - ' + c.address + ' - ' + c.cnpj;
-      list.appendChild(div);
+      const accordion = createCompanyAccordion(c);
+      list.appendChild(accordion);
     });
   }
 
@@ -83,6 +131,7 @@
       if (response.ok) {
         loadCompanies();
         document.getElementById('companyForm').reset();
+        document.getElementById('companyForm').style.display = 'none';
       } else {
         let msg = 'Erro ao criar empresa.';
         try {
@@ -102,20 +151,10 @@
     });
   });
 
-  // Exibe formulário só para RH
-  function showRhControls() {
-    const role = localStorage.getItem('role');
-    const form = document.getElementById('companyForm');
-    if (role === 'RH') {
-      form.style.display = '';
-    } else {
-      form.style.display = 'none';
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', () => {
     loadCompanies();
     showRhControls();
+    document.getElementById('companyForm').style.display = 'none';
   });
 </script>
 </body>
