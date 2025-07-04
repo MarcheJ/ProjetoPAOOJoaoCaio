@@ -3,9 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Curriculum Generator</title>
-  <link rel="stylesheet" href="/css/curriculum.css"> 
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css"> 
 </head>
 <body>
+  <div style="margin: 10px 0;">
+    <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
+    <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+    <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
+    <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Candidatos</button>
+    <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+  </div>
   <h1>Generate your Curriculum</h1>
   <form id="curriculumForm">
     <label>Full Name:</label>
@@ -43,7 +50,7 @@
       const formData = new FormData(evt.target);
       const json = Object.fromEntries(formData.entries());
       
-      const response = await fetch('/curriculum/generate', {
+      const response = await fetch('/buscaEmpregoPAOO/api/curriculum/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(json),

@@ -3,31 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <title>Companies</title>
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
 </head>
 <body>
 <nav>
-  <a href="index.html">Home</a> |
-  <a href="vacancies.html">Vacancies</a> |
-  <a href="candidates.html">Candidates</a> |
-  <a href="applications.html">Applications</a>
+  <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
+  <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
+  <a href="/buscaEmpregoPAOO/api/candidates.html">Candidatos</a> |
+  <a href="/buscaEmpregoPAOO/api/applications.html">Candidaturas</a> |
+  <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
+<div style="margin: 10px 0;">
+  <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Candidatos</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
+</div>
 
 <h1>Companies</h1>
 <div id="companiesList"></div>
 
+<form id="companyForm" style="display:none;">
+  <label>Name:</label>
+  <input type="text" id="companyName" required>
+  <br>
+  <label>CNPJ:</label>
+  <input type="text" id="companyCnpj" maxlength="14" required>
+  <br>
+  <label>Email:</label>
+  <input type="email" id="companyEmail" required>
+  <br>
+  <label>Phone:</label>
+  <input type="text" id="companyPhone">
+  <br>
+  <label>Website:</label>
+  <input type="text" id="companyWebsite">
+  <br>
+  <label>Address:</label>
+  <input type="text" id="companyAddress" required>
+  <br>
+  <button type="submit">Create Company</button>
+</form>
+
+<div id="companyError" style="color: #c00; text-align: center; margin: 10px 0;"></div>
+
 <script>
   async function loadCompanies() {
-    const response = await fetch('/companies');
+    const response = await fetch('/buscaEmpregoPAOO/api/companies');
     const data = await response.json();
-    console.log(data);
     const list = document.getElementById('companiesList');
+    list.innerHTML = '';
     data.forEach(c => {
       const div = document.createElement('div');
-      div.textContent = c.name + ' - ' + c.address;
+      div.textContent = c.name + ' - ' + c.address + ' - ' + c.cnpj;
       list.appendChild(div);
     });
   }
-  document.addEventListener('DOMContentLoaded', loadCompanies);
+
+  document.getElementById('companyForm').addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('companyError').textContent = '';
+
+    const payload = {
+      name: document.getElementById('companyName').value,
+      cnpj: document.getElementById('companyCnpj').value,
+      email: document.getElementById('companyEmail').value,
+      phone: document.getElementById('companyPhone').value,
+      website: document.getElementById('companyWebsite').value,
+      address: document.getElementById('companyAddress').value
+    };
+
+    fetch('/buscaEmpregoPAOO/api/companies', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(async response => {
+      if (response.ok) {
+        loadCompanies();
+        document.getElementById('companyForm').reset();
+      } else {
+        let msg = 'Erro ao criar empresa.';
+        try {
+          const data = await response.json();
+          if (data && data.errors && data.errors.length > 0) {
+            msg = data.errors.map(e => `${e.field}: ${e.error}`).join(' | ');
+          } else if (data && data.message) {
+            msg = data.message;
+          }
+        } catch {}
+        document.getElementById('companyError').textContent = msg;
+      }
+    })
+    .catch(err => {
+      document.getElementById('companyError').textContent = 'Erro inesperado ao criar empresa.';
+      console.error('Error creating company:', err);
+    });
+  });
+
+  // Exibe formulário só para RH
+  function showRhControls() {
+    const role = localStorage.getItem('role');
+    const form = document.getElementById('companyForm');
+    if (role === 'RH') {
+      form.style.display = '';
+    } else {
+      form.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadCompanies();
+    showRhControls();
+  });
 </script>
 </body>
 </html>

@@ -2,32 +2,227 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Vacancies</title>
+  <title>Vagas</title>
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
+  <style>
+    #vacancyForm {
+      display: none;
+    }
+    #addVacancyBtn {
+      font-size: 1.3em;
+      font-weight: bold;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+    #addVacancyBtn:hover {
+      background: #217dbb;
+    }
+    .vacancy-accordion {
+      max-width: 600px;
+      margin: 10px auto;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px #0001;
+      background: #fff;
+      overflow: hidden;
+    }
+    .vacancy-header {
+      cursor: pointer;
+      padding: 14px 18px;
+      font-weight: bold;
+      background: #3498db;
+      color: #fff;
+      border: none;
+      outline: none;
+      width: 100%;
+      text-align: left;
+      transition: background 0.2s;
+    }
+    .vacancy-header:hover {
+      background: #217dbb;
+    }
+    .vacancy-body {
+      display: none;
+      padding: 14px 18px;
+      background: #f9f9f9;
+      color: #222;
+      border-top: 1px solid #eee;
+      font-size: 1rem;
+    }
+    .vacancy-accordion.open .vacancy-body {
+      display: block;
+    }
+  </style>
 </head>
 <body>
 <nav>
-  <a href="index.html">Home</a> |
-  <a href="companies.html">Companies</a> |
-  <a href="candidates.html">Candidates</a> |
-  <a href="applications.html">Applications</a>
+  <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
+  <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
+  <a href="/buscaEmpregoPAOO/api/candidates.html">Candidatos</a> |
+  <a href="/buscaEmpregoPAOO/api/applications.html">Candidaturas</a> |
+  <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
+<div style="margin: 10px 0;">
+  <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Candidatos</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
+</div>
 
-<h1>Vacancies</h1>
+<h1>Vagas</h1>
+<button id="addVacancyBtn" title="Nova vaga" onclick="toggleVacancyForm()" style="display:none;">+</button>
+
+<form id="vacancyForm" style="display:none;">
+  <label>Título:</label>
+  <input type="text" id="vacancyTitle" required>
+  <br>
+  <label>Descrição:</label>
+  <input type="text" id="vacancyDescription" required>
+  <br>
+  <label>Empresa:</label>
+  <input type="text" id="vacancyCompanyName" required>
+  <br>
+  <label>Localização:</label>
+  <input type="text" id="vacancyLocation" required>
+  <br>
+  <label>Salário:</label>
+  <input type="number" id="vacancySalary" step="0.01">
+  <br>
+  <label>Modelo de trabalho:</label>
+  <input type="text" id="vacancyWorkMode">
+  <br>
+  <label>Tipo de contrato:</label>
+  <input type="text" id="vacancyContractType">
+  <br>
+  <label>Requisitos:</label>
+  <input type="text" id="vacancyRequirements">
+  <br>
+  <label>Responsabilidades:</label>
+  <input type="text" id="vacancyResponsibilities">
+  <br>
+  <button type="submit">Cadastrar Vaga</button>
+</form>
+
+<div id="vacancyError" style="color: #c00; text-align: center; margin: 10px 0;"></div>
+
 <div id="vacanciesList"></div>
 
 <script>
+  function toggleVacancyForm() {
+    const form = document.getElementById('vacancyForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // Exibe botão e formulário só para RH
+  function showRhControls() {
+    const role = localStorage.getItem('role');
+    const addBtn = document.getElementById('addVacancyBtn');
+    if (role === 'RH') {
+      addBtn.style.display = '';
+    } else {
+      addBtn.style.display = 'none';
+      document.getElementById('vacancyForm').style.display = 'none';
+    }
+  }
+
+  function createVacancyAccordion(v) {
+    const container = document.createElement('div');
+    container.className = 'vacancy-accordion';
+
+    // Header
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'vacancy-header';
+    header.textContent = `${v.title} - ${v.location} - ${v.companyName}`;
+    header.addEventListener('click', () => {
+      container.classList.toggle('open');
+    });
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'vacancy-body';
+    body.innerHTML = `
+      <strong>Descrição:</strong> ${v.description || '-'}<br>
+      <strong>Salário:</strong> ${v.salary != null ? 'R$ ' + v.salary : '-'}<br>
+      <strong>Modelo de trabalho:</strong> ${v.workMode || '-'}<br>
+      <strong>Tipo de contrato:</strong> ${v.contractType || '-'}<br>
+      <strong>Requisitos:</strong> ${v.requirements || '-'}<br>
+      <strong>Responsabilidades:</strong> ${v.responsibilities || '-'}
+    `;
+
+    container.appendChild(header);
+    container.appendChild(body);
+    return container;
+  }
+
   async function loadVacancies() {
-    const response = await fetch('/vacancies');
+    const response = await fetch('/buscaEmpregoPAOO/api/vacancies');
     const data = await response.json();
-    console.log(data);
     const list = document.getElementById('vacanciesList');
+    list.innerHTML = '';
     data.forEach(v => {
-      const div = document.createElement('div');
-      div.textContent = v.title + ' - ' + v.location;
-      list.appendChild(div);
+      const accordion = createVacancyAccordion(v);
+      list.appendChild(accordion);
     });
   }
-  document.addEventListener('DOMContentLoaded', loadVacancies);
+
+  document.getElementById('vacancyForm').addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('vacancyError').textContent = '';
+
+    const payload = {
+      title: document.getElementById('vacancyTitle').value,
+      description: document.getElementById('vacancyDescription').value,
+      companyName: document.getElementById('vacancyCompanyName').value,
+      location: document.getElementById('vacancyLocation').value,
+      salary: document.getElementById('vacancySalary').value || null,
+      workMode: document.getElementById('vacancyWorkMode').value,
+      contractType: document.getElementById('vacancyContractType').value,
+      requirements: document.getElementById('vacancyRequirements').value,
+      responsibilities: document.getElementById('vacancyResponsibilities').value
+    };
+
+    fetch('/buscaEmpregoPAOO/api/vacancies', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(async response => {
+      if (response.ok) {
+        loadVacancies();
+        document.getElementById('vacancyForm').reset();
+        document.getElementById('vacancyForm').style.display = 'none';
+      } else {
+        let msg = 'Erro ao cadastrar vaga.';
+        try {
+          const data = await response.json();
+          if (data && data.errors && data.errors.length > 0) {
+            msg = data.errors.map(e => `${e.field}: ${e.error}`).join(' | ');
+          } else if (data && data.message) {
+            msg = data.message;
+          }
+        } catch {}
+        document.getElementById('vacancyError').textContent = msg;
+      }
+    })
+    .catch(err => {
+      document.getElementById('vacancyError').textContent = 'Erro inesperado ao cadastrar vaga.';
+      console.error('Error creating vacancy:', err);
+    });
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadVacancies();
+    showRhControls();
+    document.getElementById('vacancyForm').style.display = 'none';
+  });
 </script>
 </body>
 </html>

@@ -1,16 +1,19 @@
 package com.syncteam.buscaEmpregoPAOO.services;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
 import com.syncteam.buscaEmpregoPAOO.dtos.CurriculumDto;
-import org.springframework.stereotype.Service;
-
-import java.io.FileOutputStream;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CurriculumService {
@@ -18,7 +21,13 @@ public class CurriculumService {
     public void generatePdf(CurriculumDto dto) {
         Document document = new Document();
         try {
-            PdfWriter.getInstance(document, new FileOutputStream("curriculum_" + dto.fullName() + ".pdf"));
+            // Cria a pasta se não existir
+            File dir = new File("curriculums");
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            String filename = "curriculums/curriculum_" + dto.fullName() + ".pdf";
+            PdfWriter.getInstance(document, new FileOutputStream(filename));
             document.open();
 
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);

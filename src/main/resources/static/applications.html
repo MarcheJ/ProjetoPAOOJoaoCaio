@@ -3,21 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <title>Applications</title>
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
 </head>
 <body>
 <nav>
-  <a href="index.html">Home</a> |
-  <a href="vacancies.html">Vacancies</a> |
-  <a href="companies.html">Companies</a> |
-  <a href="candidates.html">Candidates</a>
+  <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
+  <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
+  <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
+  <a href="/buscaEmpregoPAOO/api/candidates.html">Candidatos</a> |
+  <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
+<div style="margin: 10px 0;">
+  <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Candidatos</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
+</div>
 
 <h1>Applications</h1>
 <div id="applicationsList"></div>
 
 <script>
   async function loadApplications() {
-    const response = await fetch('/applications');
+    const response = await fetch('/buscaEmpregoPAOO/api/applications');
     const data = await response.json();
     console.log(data);
     const list = document.getElementById('applicationsList');

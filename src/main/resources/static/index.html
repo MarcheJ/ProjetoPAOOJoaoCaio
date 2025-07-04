@@ -3,21 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <title>Busca Emprego PAOO - Home</title>
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
 </head>
 <body>
-  <h1>Vagas Disponíveis</h1>
-  <nav>
-    <a href="vacancies.html">Vacancies</a> |
-    <a href="companies.html">Companies</a> |
-    <a href="candidates.html">Candidates</a> |
-    <a href="applications.html">Applications</a>
+  <h1>Busca Emprego - PAOO</h1>
+  <nav id="mainNav">
+    <!-- O menu será preenchido via JS -->
   </nav>
+  <div style="margin: 10px 0;" id="mainButtons">
+    <!-- Os botões serão preenchidos via JS -->
+  </div>
   <ul id="vacanciesList"></ul>
   <p>Welcome to the application!</p>
-  <!-- Optionally add links or scripts to navigate to other pages -->
 
   <script>
-    fetch('/vacancies')
+    function isLoggedIn() {
+      return !!localStorage.getItem('candidateId');
+    }
+
+    function renderMenu() {
+      const nav = document.getElementById('mainNav');
+      const btns = document.getElementById('mainButtons');
+      nav.innerHTML = '';
+      btns.innerHTML = '';
+
+      if (isLoggedIn()) {
+        nav.innerHTML = `
+          <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
+          <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
+          <a href="/buscaEmpregoPAOO/api/candidates.html">Minha Conta</a> |
+          <a href="/buscaEmpregoPAOO/api/applications.html">Candidaturas</a> |
+          <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
+        `;
+        btns.innerHTML = `
+          <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
+        `;
+      } else {
+        nav.innerHTML = `
+          <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
+          <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
+          <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a> |
+          <a href="/buscaEmpregoPAOO/api/candidates.html">Login</a> |
+          <a href="/buscaEmpregoPAOO/api/candidates.html#create">Criar Conta</a>
+        `;
+        btns.innerHTML = `
+          <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Login</button>
+          <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html#create'">Criar Conta</button>
+        `;
+      }
+    }
+
+    renderMenu();
+
+    fetch('/buscaEmpregoPAOO/api/vacancies')
       .then(response => response.json())
       .then(data => {
         const list = document.getElementById('vacanciesList');

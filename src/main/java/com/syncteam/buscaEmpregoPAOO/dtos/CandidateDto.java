@@ -1,13 +1,14 @@
 package com.syncteam.buscaEmpregoPAOO.dtos;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
+import org.hibernate.validator.constraints.br.CPF;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import org.hibernate.validator.constraints.br.CPF;
-
-import java.time.LocalDate;
-import java.util.UUID;
 
 public record CandidateDto(
         UUID id,
@@ -43,5 +44,8 @@ public record CandidateDto(
         String address,
 
         @Size(max = 50, message = "Education level must be at most 50 characters")
-        String educationLevel) {
-}
+        String educationLevel,
+
+        @NotBlank(message = "Role is required")
+        String role 
+) {}

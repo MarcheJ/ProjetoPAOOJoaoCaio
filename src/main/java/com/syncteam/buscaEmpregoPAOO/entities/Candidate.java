@@ -53,5 +53,8 @@ public class Candidate {
     @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate;
 
+    @Column(name = "role", length = 20, nullable = false)
+    private String role = "USER"; // Valores possíveis: USER, RH
+
     public Candidate() {}
 }

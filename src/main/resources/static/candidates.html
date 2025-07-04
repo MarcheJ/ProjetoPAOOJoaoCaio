@@ -3,17 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <title>Candidates</title>
+  <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
 </head>
 <body>
 <nav>
-  <a href="index.html">Home</a> |
-  <a href="vacancies.html">Vacancies</a> |
-  <a href="companies.html">Companies</a> |
-  <a href="applications.html">Applications</a>
+  <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
+  <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
+  <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
+  <a href="/buscaEmpregoPAOO/api/applications.html">Candidaturas</a> |
+  <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
+<div style="margin: 10px 0;">
+  <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
+</div>
 
-<h1>Candidates</h1>
+<h1>Minha Conta</h1>
 <div id="candidatesList"></div>
+
+<div id="candidateError" style="color: #c00; text-align: center; margin: 10px 0;"></div>
+
+<!-- Botão de logout -->
+<div id="logoutArea" style="text-align:center; margin-bottom:15px; display:none;">
+  <button id="logoutBtn" type="button">Sair</button>
+</div>
+
+<!-- Login Interface -->
+<div id="loginArea" style="max-width:400px;margin:20px auto;display:none;">
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label>Email:</label>
+    <input type="email" id="loginEmail" required>
+    <br>
+    <label>Senha:</label>
+    <input type="password" id="loginPassword" required>
+    <br>
+    <button type="submit">Entrar</button>
+  </form>
+  <div id="loginError" style="color:#c00;text-align:center;margin:10px 0;"></div>
+  <button id="showCreateBtn" type="button" style="margin-top:10px;">Criar Conta</button>
+</div>
 
 <form id="candidateForm">
   <label>Name:</label>
@@ -25,65 +57,226 @@
   <label>Password:</label>
   <input type="password" id="password" required>
   <br>
-  <button type="submit">Create Candidate</button>
+  <label>CPF:</label>
+  <input type="text" id="cpf" maxlength="11" required>
+  <br>
+  <label>Birth Date:</label>
+  <input type="date" id="birthDate" required>
+  <br>
+  <label>Address:</label>
+  <input type="text" id="address" required>
+  <br>
+  <label>Phone:</label>
+  <input type="text" id="phone">
+  <br>
+  <label>Gender:</label>
+  <input type="text" id="gender">
+  <br>
+  <label>Occupation:</label>
+  <input type="text" id="occupation">
+  <br>
+  <label>Education Level:</label>
+  <input type="text" id="educationLevel">
+  <br>
+  <label>Tipo de usuário:</label>
+  <select id="role" required>
+    <option value="USER" selected>Usuário Comum</option>
+    <option value="RH">RH</option>
+  </select>
+  <br>
+  <button type="submit">Criar Conta</button>
 </form>
 
 <script>
   function renderCandidate(c) {
     const container = document.createElement('div');
-    container.textContent = c.name + ' - ' + c.email;
+    container.innerHTML = `
+      <strong>Nome:</strong> ${c.name}<br>
+      <strong>Email:</strong> ${c.email}<br>
+      <strong>CPF:</strong> ${c.cpf}<br>
+      <strong>Data de Nascimento:</strong> ${c.birthDate}<br>
+      <strong>Endereço:</strong> ${c.address}<br>
+      <strong>Telefone:</strong> ${c.phone || '-'}<br>
+      <strong>Gênero:</strong> ${c.gender || '-'}<br>
+      <strong>Ocupação:</strong> ${c.occupation || '-'}<br>
+      <strong>Escolaridade:</strong> ${c.educationLevel || '-'}<br>
+      <strong>Tipo:</strong> ${c.role}
+    `;
 
     const resumeButton = document.createElement('button');
-    resumeButton.textContent = 'Generate Resume';
+    resumeButton.textContent = 'Gerar Currículo';
     resumeButton.addEventListener('click', () => {
-      fetch(`/candidates/${c.id}/resume`)
-        .then(() => alert('Resume generation triggered.'))
-        .catch(err => console.error('Failed to generate resume:', err));
+      fetch(`/buscaEmpregoPAOO/api/candidates/${c.id}/resume`)
+        .then(() => alert('Geração de currículo iniciada.'))
+        .catch(err => console.error('Falha ao gerar currículo:', err));
     });
     container.appendChild(resumeButton);
 
     return container;
   }
 
-  async function loadCandidates() {
-    const response = await fetch('/candidates');
-    const data = await response.json();
-    console.log(data);
-    const list = document.getElementById('candidatesList');
-    list.innerHTML = ''; // Clear existing list
-    data.forEach(c => {
-      const div = renderCandidate(c);
-      list.appendChild(div);
-    });
+  function showLogin(show) {
+    document.getElementById('loginArea').style.display = show ? '' : 'none';
+    document.getElementById('candidateForm').style.display = show ? 'none' : '';
+    document.getElementById('logoutArea').style.display = 'none';
   }
 
+  function showAccount() {
+    document.getElementById('loginArea').style.display = 'none';
+    document.getElementById('candidateForm').style.display = 'none';
+    document.getElementById('logoutArea').style.display = '';
+  }
+
+  function saveUserToLocalStorage(candidate) {
+    localStorage.setItem('candidateId', candidate.id);
+    localStorage.setItem('role', candidate.role);
+    localStorage.setItem('candidateEmail', candidate.email);
+  }
+
+  function clearUserFromLocalStorage() {
+    localStorage.removeItem('candidateId');
+    localStorage.removeItem('role');
+    localStorage.removeItem('candidateEmail');
+  }
+
+  async function loadMyCandidate() {
+    const candidateId = localStorage.getItem('candidateId');
+    const list = document.getElementById('candidatesList');
+    list.innerHTML = '';
+    if (!candidateId) {
+      showLogin(true);
+      return;
+    }
+    try {
+      const response = await fetch(`/buscaEmpregoPAOO/api/candidates/${candidateId}`);
+      if (response.ok) {
+        const c = await response.json();
+        list.appendChild(renderCandidate(c));
+        showAccount();
+      } else {
+        showLogin(true);
+      }
+    } catch {
+      showLogin(true);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('birthDate').setAttribute('max', today);
+    loadMyCandidate();
+  });
+
+  // Cadastro de candidato
   document.getElementById('candidateForm').addEventListener('submit', e => {
     e.preventDefault();
+    document.getElementById('candidateError').textContent = '';
+
+    const birthDateInput = document.getElementById('birthDate');
+    const birthDateValue = birthDateInput.value;
+
     const payload = {
       name: document.getElementById('name').value,
       email: document.getElementById('email').value,
       password: document.getElementById('password').value,
-      cpf: "00000000000", // Ajustar conforme necessário
-      birthDate: "1990-01-01", // Exemplo
-      address: "Default Address"
+      cpf: document.getElementById('cpf').value,
+      birthDate: birthDateValue,
+      address: document.getElementById('address').value,
+      phone: document.getElementById('phone').value,
+      gender: document.getElementById('gender').value,
+      occupation: document.getElementById('occupation').value,
+      educationLevel: document.getElementById('educationLevel').value,
+      role: document.getElementById('role').value
     };
 
-    fetch('/candidates', {
+    fetch('/buscaEmpregoPAOO/api/candidates', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(payload)
     })
-    .then(() => {
-      loadCandidates();
-      document.getElementById('candidateForm').reset();
+    .then(async response => {
+      if (response.ok) {
+        // Após criar, busque o candidato pelo e-mail para salvar o id
+        const email = payload.email;
+        const res = await fetch(`/buscaEmpregoPAOO/api/candidates`);
+        if (res.ok) {
+          const all = await res.json();
+          const found = all.find(c => c.email === email);
+          if (found) {
+            // Não faz login automático, apenas mostra tela de login
+            document.getElementById('candidateForm').style.display = 'none';
+            document.getElementById('loginArea').style.display = '';
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('candidateError').textContent = 'Conta criada com sucesso! Faça login para continuar.';
+          }
+        }
+        document.getElementById('candidateForm').reset();
+      } else {
+        let msg = 'Erro ao criar candidato.';
+        try {
+          const data = await response.json();
+          if (data && data.errors && data.errors.length > 0) {
+            msg = data.errors.map(e => `${e.field}: ${e.error}`).join(' | ');
+          } else if (data && data.message) {
+            msg = data.message;
+          }
+        } catch {}
+        document.getElementById('candidateError').textContent = msg;
+      }
     })
-    .catch(err => console.error('Error creating candidate:', err));
+    .catch(err => {
+      document.getElementById('candidateError').textContent = 'Erro inesperado ao criar candidato.';
+      console.error('Error creating candidate:', err);
+    });
   });
 
-  document.addEventListener('DOMContentLoaded', loadCandidates);
-</script>
-</body>
-</html>
+  // Login handler
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    document.getElementById('loginError').textContent = '';
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+      const res = await fetch('/buscaEmpregoPAOO/api/candidates');
+      if (res.ok) {
+        const all = await res.json();
+        const found = all.find(c => c.email === email && c.password === password);
+        if (found) {
+          saveUserToLocalStorage(found);
+          loadMyCandidate();
+        } else {
+          document.getElementById('loginError').textContent = 'E-mail ou senha inválidos.';
+        }
+      } else {
+        document.getElementById('loginError').textContent = 'Erro ao buscar candidatos.';
+      }
+    } catch {
+      document.getElementById('loginError').textContent = 'Erro inesperado ao tentar login.';
+    }
+  });
+
+  // Mostra o formulário de cadastro se hash for #create ou se clicar no botão "Criar Conta"
+  function showCreateForm() {
+    document.getElementById('loginArea').style.display = 'none';
+    document.getElementById('candidateForm').style.display = '';
+    document.getElementById('candidateError').textContent = '';
+  }
+
+  document.getElementById('showCreateBtn').onclick = showCreateForm;
+
+  // Se acessar com #create na URL, mostra direto o formulário de cadastro
+  if (window.location.hash === '#create') {
+    showCreateForm();
+  }
+
+  // Logout handler
+  document.getElementById('logoutBtn').onclick = function() {
+    clearUserFromLocalStorage();
+    document.getElementById('candidatesList').innerHTML = '';
+    showLogin(true);
+  };
 </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
+  background: #f7f7f7;
 }
 
 h1 {
@@ -8,9 +9,29 @@ h1 {
   text-align: center;
 }
 
+nav {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+nav a {
+  color: #3498db;
+  text-decoration: none;
+  margin: 0 8px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
 form {
   max-width: 400px;
   margin: 0 auto;
+  background: #fff;
+  padding: 18px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0001;
 }
 
 label {
@@ -24,6 +45,9 @@ input, textarea {
   padding: 8px;
   margin-top: 5px;
   box-sizing: border-box;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background: #fafafa;
 }
 
 button {
@@ -34,4 +58,54 @@ button {
   color: #fff;
   border: none;
   border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background-color: #217dbb;
+}
+
+div[style*="margin: 10px 0"] {
+  text-align: center;
+}
+
+#vacanciesList > div,
+#companiesList > div,
+#candidatesList > div,
+#applicationsList > div {
+  background: #fff;
+  margin: 10px auto;
+  padding: 12px 18px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px #0001;
+  max-width: 500px;
+  font-size: 1rem;
+}
+
+ul#vacanciesList {
+  list-style: none;
+  padding: 0;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+ul#vacanciesList li {
+  background: #fff;
+  margin: 10px 0;
+  padding: 12px 18px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px #0001;
+  font-size: 1rem;
+}
+
+#responseArea {
+  margin: 20px auto;
+  max-width: 500px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 12px 18px;
+  box-shadow: 0 1px 4px #0001;
+  color: #222;
+  word-break: break-word;
 }
