@@ -4,21 +4,21 @@ import com.syncteam.buscaEmpregoPAOO.entities.Application;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ApplicationDto(
         UUID applicationId,
 
-        @NotBlank(message = "Candidate is required")
+        @NotNull(message = "Candidate is required")
         UUID candidateId,
 
-        @NotBlank(message = "Job vacancy is required")
+        @NotNull(message = "Job vacancy is required")
         UUID jobId,
 
         LocalDate applicationDate,
 
-        @NotBlank(message = "Status is required")
+        @jakarta.validation.constraints.NotBlank(message = "Status is required")
         @Size(max = 50, message = "Status must be at most 50 characters")
         String applicationStatus
 ) {

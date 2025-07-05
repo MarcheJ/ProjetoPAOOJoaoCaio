@@ -2,40 +2,101 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Applications</title>
+  <title>Minhas Candidaturas</title>
   <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
 </head>
 <body>
 <nav>
   <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
   <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
-  <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
-  <a href="/buscaEmpregoPAOO/api/candidates.html">Candidatos</a> |
+  <a href="/buscaEmpregoPAOO/api/candidates.html">Minha Conta</a> |
+  <a href="/buscaEmpregoPAOO/api/applications.html">Minhas Candidaturas</a> |
   <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
 <div style="margin: 10px 0;">
   <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
   <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
-  <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
-  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Candidatos</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Minhas Candidaturas</button>
   <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
 </div>
 
-<h1>Applications</h1>
+<h1>Minhas Candidaturas</h1>
 <div id="applicationsList"></div>
 
 <script>
+  async function getVacancyInfo(vacancyId) {
+    try {
+      const res = await fetch(`/buscaEmpregoPAOO/api/vacancies/${vacancyId}`);
+      if (res.ok) return await res.json();
+    } catch {}
+    return null;
+  }
+
+  function createApplicationAccordion(application, vacancy) {
+    const container = document.createElement('div');
+    container.className = 'application-accordion';
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'application-header';
+    header.textContent = vacancy
+      ? `${vacancy.title} - ${vacancy.location}`
+      : `Vaga: ${application.jobId}`;
+    header.addEventListener('click', () => {
+      container.classList.toggle('open');
+    });
+
+    const body = document.createElement('div');
+    body.className = 'application-body';
+    body.innerHTML = vacancy
+      ? `
+        <strong>Status:</strong> ${application.applicationStatus}<br>
+        <strong>Descrição:</strong> ${vacancy.description || '-'}<br>
+        <strong>Salário:</strong> ${vacancy.salary != null ? 'R$ ' + vacancy.salary : '-'}<br>
+        <strong>Modelo de trabalho:</strong> ${vacancy.workMode || '-'}<br>
+        <strong>Tipo de contrato:</strong> ${vacancy.contractType || '-'}<br>
+        <strong>Requisitos:</strong> ${vacancy.requirements || '-'}<br>
+        <strong>Responsabilidades:</strong> ${vacancy.responsibilities || '-'}
+      `
+      : `<strong>Status:</strong> ${application.applicationStatus}<br><em>Informações da vaga não encontradas.</em>`;
+
+    const desistirBtn = document.createElement('button');
+    desistirBtn.textContent = 'Desistir';
+    desistirBtn.style.marginLeft = '10px';
+    desistirBtn.onclick = async () => {
+      if (confirm('Deseja realmente desistir desta candidatura?')) {
+        await fetch(`/buscaEmpregoPAOO/api/applications/${application.applicationId}`, { method: 'DELETE' });
+        loadApplications();
+      }
+    };
+    body.appendChild(desistirBtn);
+
+    container.appendChild(header);
+    container.appendChild(body);
+    return container;
+  }
+
   async function loadApplications() {
     const response = await fetch('/buscaEmpregoPAOO/api/applications');
     const data = await response.json();
-    console.log(data);
     const list = document.getElementById('applicationsList');
-    data.forEach(a => {
-      const div = document.createElement('div');
-      div.textContent = a.applicationId + ' - ' + a.applicationStatus;
-      list.appendChild(div);
-    });
+    list.innerHTML = '';
+    const candidateId = localStorage.getItem('candidateId');
+    const myApplications = data.filter(a => a.candidateId === candidateId);
+
+    if (myApplications.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:#888;">NÃO HA CANDIDATURAS</div>';
+      return;
+    }
+
+    for (const application of myApplications) {
+      const vacancy = await getVacancyInfo(application.jobId);
+      const accordion = createApplicationAccordion(application, vacancy);
+      list.appendChild(accordion);
+    }
   }
+
   document.addEventListener('DOMContentLoaded', loadApplications);
 </script>
 </body>

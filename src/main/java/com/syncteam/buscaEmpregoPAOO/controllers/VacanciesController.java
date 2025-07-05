@@ -42,13 +42,13 @@ public class VacanciesController implements GenericController {
     @PostMapping
     public ResponseEntity<VacancyDto> createVacancy(@RequestBody @Valid VacancyDto dto) {
         Vacancies vacancy = mapper.toEntity(dto);
-        service.createVacancy(vacancy);
+        service.createVacancy(vacancy, dto);
 
         URI location = generateHeaderLocation(vacancy.getId());
         return ResponseEntity.created(location).build();
     }
 
-    // UPDATE (by id)
+    // UPDATE 
     @PutMapping("{id}")
     public ResponseEntity<Void> updateVacancy(
             @PathVariable("id") String id, @RequestBody @Valid VacancyDto dto) {
@@ -60,7 +60,7 @@ public class VacanciesController implements GenericController {
                 : ResponseEntity.notFound().build();
     }
 
-    // DELETE (by id)
+    // DELETE 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteVacancy(@PathVariable("id") String id) {
         UUID vacancyId = UUID.fromString(id);

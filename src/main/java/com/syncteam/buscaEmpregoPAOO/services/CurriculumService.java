@@ -21,12 +21,13 @@ public class CurriculumService {
     public void generatePdf(CurriculumDto dto) {
         Document document = new Document();
         try {
-            // Cria a pasta se não existir
-            File dir = new File("curriculums");
+            String staticDir = "curriculums";
+            File dir = new File(staticDir);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            String filename = "curriculums/curriculum_" + dto.fullName() + ".pdf";
+            String safeName = dto.fullName().replaceAll("[^a-zA-Z0-9_-]", "_");
+            String filename = staticDir + "/curriculum_" + safeName + "_" + System.currentTimeMillis() + ".pdf";
             PdfWriter.getInstance(document, new FileOutputStream(filename));
             document.open();
 

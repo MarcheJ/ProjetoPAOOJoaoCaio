@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface VacancyRepository extends JpaRepository<Vacancies, UUID> {
     
     List<Vacancies> findByTitle(String title);
-    List<Vacancies> findByCompanyName(String companyName);
     List<Vacancies> findByLocation(String location);
 
 }
+

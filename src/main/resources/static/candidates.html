@@ -9,15 +9,13 @@
 <nav>
   <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
   <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
-  <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
-  <a href="/buscaEmpregoPAOO/api/applications.html">Candidaturas</a> |
+  <a href="/buscaEmpregoPAOO/api/candidates.html">Minha Conta</a> |
   <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
 <div style="margin: 10px 0;">
   <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
   <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
-  <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
-  <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
   <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
 </div>
 
@@ -28,6 +26,7 @@
 
 <div id="logoutArea" style="text-align:center; margin-bottom:15px; display:none;">
   <button id="logoutBtn" type="button">Sair</button>
+  <span id="userExtraButtons"></span>
 </div>
 
 <div id="loginArea" style="max-width:400px;margin:20px auto;display:none;">
@@ -115,6 +114,16 @@
     document.getElementById('loginArea').style.display = 'none';
     document.getElementById('candidateForm').style.display = 'none';
     document.getElementById('logoutArea').style.display = '';
+    const role = localStorage.getItem('role');
+    const extra = document.getElementById('userExtraButtons');
+    let html = '';
+    if (role === 'USER') {
+      html += `<button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'" type="button">Minhas Candidaturas</button>`;
+    }
+    if (role === 'RH') {
+      html += `<button onclick="location.href='/buscaEmpregoPAOO/api/my-applications.html'" type="button">Minhas Vagas</button>`;
+    }
+    extra.innerHTML = html;
   }
 
   function saveUserToLocalStorage(candidate) {
@@ -157,7 +166,6 @@
     loadMyCandidate();
   });
 
-  // Cadastro de candidato
   document.getElementById('candidateForm').addEventListener('submit', e => {
     e.preventDefault();
     document.getElementById('candidateError').textContent = '';
@@ -262,5 +270,7 @@
     showLogin(true);
   };
 </script>
+</body>
+</html>
 </body>
 </html>

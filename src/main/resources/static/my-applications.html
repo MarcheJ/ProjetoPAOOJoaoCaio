@@ -2,25 +2,27 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Vagas</title>
+  <title>Minhas Vagas</title>
   <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/curriculum.css">
   <link rel="stylesheet" href="/buscaEmpregoPAOO/api/css/vacancies.css">
 </head>
 <body>
 <nav>
   <a href="/buscaEmpregoPAOO/api/index.html">Início</a> |
-  <a href="/buscaEmpregoPAOO/api/candidates.html">Minha Conta</a> |
   <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
+  <a href="/buscaEmpregoPAOO/api/candidates.html">Minha Conta</a> |
+  <a href="/buscaEmpregoPAOO/api/my-applications.html">Minhas Vagas</a> |
   <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
 </nav>
 <div style="margin: 10px 0;">
   <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
-  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
   <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
+  <button onclick="location.href='/buscaEmpregoPAOO/api/my-applications.html'">Minhas Vagas</button>
   <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
 </div>
 
-<h1>Vagas</h1>
+<h1>Minhas Vagas</h1>
 <button id="addVacancyBtn" title="Nova vaga" onclick="toggleVacancyForm()" style="display:none;">+</button>
 
 <form id="vacancyForm" style="display:none;">
@@ -95,45 +97,34 @@
       <strong>Responsabilidades:</strong> ${v.responsibilities || '-'}
     `;
 
-    if (localStorage.getItem('role') === 'USER') {
-      const applyBtn = document.createElement('button');
-      applyBtn.textContent = 'Candidatar-se';
-      applyBtn.style.marginLeft = '10px';
-      applyBtn.onclick = async () => {
-        const candidateId = localStorage.getItem('candidateId');
-        if (!candidateId || candidateId.length !== 36) { 
-          alert('Faça login para se candidatar.');
-          return;
-        }
-        const res = await fetch('/buscaEmpregoPAOO/api/applications');
-        const allApps = await res.json();
-        const alreadyApplied = allApps.some(a => a.candidateId === candidateId && a.jobId === v.id);
-        if (alreadyApplied) {
-          alert('Você já se candidatou para esta vaga.');
-          return;
-        }
-        const payload = {
-          candidateId: candidateId,
-          jobId: v.id,
-          applicationStatus: 'PENDENTE'
-        };
-        try {
-          const resp = await fetch('/buscaEmpregoPAOO/api/applications', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-          });
-          if (resp.ok) {
-            alert('Candidatura realizada com sucesso!');
-          } else {
-            const data = await resp.json().catch(() => ({}));
-            alert(data.message || 'Erro ao se candidatar.');
-          }
-        } catch (err) {
-          alert('Erro inesperado ao se candidatar.');
+    if (localStorage.getItem('role') === 'RH') {
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Editar';
+      editBtn.style.marginLeft = '10px';
+      editBtn.onclick = () => {
+        document.getElementById('vacancyTitle').value = v.title;
+        document.getElementById('vacancyDescription').value = v.description;
+        document.getElementById('vacancyLocation').value = v.location;
+        document.getElementById('vacancySalary').value = v.salary || '';
+        document.getElementById('vacancyWorkMode').value = v.workMode || '';
+        document.getElementById('vacancyContractType').value = v.contractType || '';
+        document.getElementById('vacancyRequirements').value = v.requirements || '';
+        document.getElementById('vacancyResponsibilities').value = v.responsibilities || '';
+        document.getElementById('vacancyForm').style.display = 'block';
+        document.getElementById('vacancyForm').dataset.editingId = v.id;
+      };
+      body.appendChild(editBtn);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Apagar';
+      deleteBtn.style.marginLeft = '10px';
+      deleteBtn.onclick = async () => {
+        if (confirm('Deseja apagar esta vaga?')) {
+          await fetch(`/buscaEmpregoPAOO/api/vacancies/${v.id}`, { method: 'DELETE' });
+          loadVacancies();
         }
       };
-      body.appendChild(applyBtn);
+      body.appendChild(deleteBtn);
     }
 
     container.appendChild(header);
@@ -146,11 +137,13 @@
     const data = await response.json();
     const list = document.getElementById('vacanciesList');
     list.innerHTML = '';
-    if (data.length === 0) {
+    const myId = localStorage.getItem('candidateId');
+    const myVacancies = data.filter(v => v.createdBy === myId);
+    if (myVacancies.length === 0) {
       list.innerHTML = '<div style="text-align:center;color:#888;">não ha vagas cadastradas</div>';
       return;
     }
-    data.forEach(v => {
+    myVacancies.forEach(v => {
       const accordion = createVacancyAccordion(v);
       list.appendChild(accordion);
     });
@@ -169,7 +162,7 @@
       contractType: document.getElementById('vacancyContractType').value,
       requirements: document.getElementById('vacancyRequirements').value,
       responsibilities: document.getElementById('vacancyResponsibilities').value,
-      createdBy: localStorage.getItem('candidateId') 
+      createdBy: localStorage.getItem('candidateId')
     };
 
     const editingId = document.getElementById('vacancyForm').dataset.editingId;

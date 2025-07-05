@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -38,6 +39,13 @@ public class Application {
 
     @Column(name = "application_status", length = 50, nullable = false)
     private String applicationStatus;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.applicationDate == null) {
+            this.applicationDate = LocalDate.now();
+        }
+    }
 
     public Candidate getCandidate() {
         return candidate;

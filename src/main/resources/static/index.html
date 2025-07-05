@@ -28,29 +28,23 @@
       if (isLoggedIn()) {
         nav.innerHTML = `
           <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
-          <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
           <a href="/buscaEmpregoPAOO/api/candidates.html">Minha Conta</a> |
-          <a href="/buscaEmpregoPAOO/api/applications.html">Candidaturas</a> |
           <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a>
         `;
         btns.innerHTML = `
           <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
-          <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
           <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
-          <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
           <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
         `;
       } else {
         nav.innerHTML = `
           <a href="/buscaEmpregoPAOO/api/vacancies.html">Vagas</a> |
-          <a href="/buscaEmpregoPAOO/api/companies.html">Empresas</a> |
           <a href="/buscaEmpregoPAOO/api/curriculum.html">Currículo</a> |
           <a href="/buscaEmpregoPAOO/api/candidates.html">Login</a> |
           <a href="/buscaEmpregoPAOO/api/candidates.html#create">Criar Conta</a>
         `;
         btns.innerHTML = `
           <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
-          <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
           <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
           <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Login</button>
           <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html#create'">Criar Conta</button>
@@ -60,17 +54,8 @@
 
     renderMenu();
 
-    fetch('/buscaEmpregoPAOO/api/vacancies')
-      .then(response => response.json())
-      .then(data => {
-        const list = document.getElementById('vacanciesList');
-        data.forEach(vacancy => {
-          const li = document.createElement('li');
-          li.textContent = vacancy.title + ' - ' + vacancy.location;
-          list.appendChild(li);
-        });
-      })
-      .catch(err => console.error('Erro ao buscar vagas', err));
+    
   </script>
 </body>
 </html>
+ 

@@ -24,13 +24,13 @@ public class CurriculumController {
 
         if (!missingKeywords.isEmpty()) {
             return ResponseEntity.ok(Map.of(
-                    "message", "Curriculum generated with keyword suggestions.",
+                    "message", "Currículo gerado com sugestões de palavras-chave.",
                     "missingKeywords", missingKeywords
             ));
         }
 
         return ResponseEntity.ok(Map.of(
-                "message", "Curriculum successfully generated!"
+                "message", "Currículo gerado com sucesso!"
         ));
     }
 }

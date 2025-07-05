@@ -69,8 +69,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleUnhandledExceptions(RuntimeException e) {
-        // É importante logar erros inesperados
-        e.printStackTrace(); // ou use um logger como log.error("Unexpected error", e);
+        e.printStackTrace();
 
         return new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

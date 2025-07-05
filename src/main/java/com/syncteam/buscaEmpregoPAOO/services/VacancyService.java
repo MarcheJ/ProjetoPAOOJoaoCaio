@@ -32,7 +32,8 @@ public class VacancyService {
         return repository.findById(id).map(mapper::toDTO);
     }
 
-    public void createVacancy(Vacancies vacancy) {
+    public void createVacancy(Vacancies vacancy, VacancyDto dto) {
+        vacancy.setCreatedBy(dto.createdBy());
         repository.save(vacancy);
     }
 

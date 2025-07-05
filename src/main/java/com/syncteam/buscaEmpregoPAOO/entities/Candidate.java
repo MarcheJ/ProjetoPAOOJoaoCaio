@@ -45,7 +45,6 @@ public class Candidate {
     @Column(name = "address", nullable = false)
     private String address;
 
-    // Provavelmente irá mudar para enum
     @Column(name = "education_level")
     private String educationLevel;
 
@@ -54,7 +53,7 @@ public class Candidate {
     private LocalDate registrationDate;
 
     @Column(name = "role", length = 20, nullable = false)
-    private String role = "USER"; // Valores possíveis: USER, RH
+    private String role = "USER";
 
     public Candidate() {}
 }

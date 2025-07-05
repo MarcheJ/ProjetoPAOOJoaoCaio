@@ -9,9 +9,8 @@
   <div style="margin: 10px 0;">
     <button onclick="location.href='/buscaEmpregoPAOO/api/index.html'">Início</button>
     <button onclick="location.href='/buscaEmpregoPAOO/api/vacancies.html'">Vagas</button>
-    <button onclick="location.href='/buscaEmpregoPAOO/api/companies.html'">Empresas</button>
-    <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Candidatos</button>
-    <button onclick="location.href='/buscaEmpregoPAOO/api/applications.html'">Candidaturas</button>
+    <button onclick="location.href='/buscaEmpregoPAOO/api/candidates.html'">Minha Conta</button>
+    <button onclick="location.href='/buscaEmpregoPAOO/api/curriculum.html'">Currículo</button>
   </div>
   <h1>Gere seu curriculo automaticamente</h1>
   <form id="curriculumForm">
@@ -47,7 +46,8 @@
   <script>
     document.getElementById('curriculumForm').addEventListener('submit', async (evt) => {
       evt.preventDefault();
-      const formData = new FormData(evt.target);
+      const form = evt.target;
+      const formData = new FormData(form);
       const json = Object.fromEntries(formData.entries());
       
       const response = await fetch('/buscaEmpregoPAOO/api/curriculum/generate', {
@@ -57,7 +57,11 @@
       });
       
       const result = await response.json();
-      document.getElementById('responseArea').textContent = JSON.stringify(result);
+      document.getElementById('responseArea').textContent = result.message || 'Erro ao gerar currículo.';
+
+      if (response.ok) {
+        form.reset();
+      }
     });
   </script>
 </body>

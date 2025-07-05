@@ -3,6 +3,7 @@ package com.syncteam.buscaEmpregoPAOO.services;
 import com.syncteam.buscaEmpregoPAOO.dtos.ApplicationDto;
 import com.syncteam.buscaEmpregoPAOO.entities.Application;
 import com.syncteam.buscaEmpregoPAOO.repositories.ApplicationRepository;
+import com.syncteam.buscaEmpregoPAOO.repositories.CandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class ApplicationService {
 
     private final ApplicationRepository repository;
+    private final CandidateRepository candidateRepository;
 
     public List<ApplicationDto> findAllApplications() {
         List<Application> applications = repository.findAll();
@@ -27,7 +29,12 @@ public class ApplicationService {
     }
 
     public Application createApplication(ApplicationDto dto) {
-        Application application = toEntity(dto);
+        var candidate = candidateRepository.findById(dto.candidateId())
+            .orElseThrow(() -> new IllegalArgumentException("Candidato não encontrado para o ID informado."));
+        Application application = new Application();
+        application.setCandidate(candidate);
+        application.setJobId(dto.jobId());
+        application.setApplicationStatus(dto.applicationStatus());
         return repository.save(application);
     }
 
@@ -64,6 +71,12 @@ public class ApplicationService {
         application.setApplicationId(dto.applicationId());
         application.setApplicationStatus(dto.applicationStatus());
         application.setJobId(dto.jobId());
+        candidateRepository.findById(dto.candidateId())
+            .ifPresentOrElse(
+                application::setCandidate,
+                () -> { throw new IllegalArgumentException("Candidato não encontrado para o ID informado."); }
+            );
         return application;
     }
 }
+

@@ -16,10 +16,6 @@ public record VacancyDto(
         @NotBlank(message = "Description is required")
         String description,
 
-        @NotBlank(message = "Company name is required")
-        @Size(max = 100, message = "Company name must be at most 100 characters")
-        String companyName,
-
         @NotBlank(message = "Location is required")
         @Size(max = 100, message = "Location must be at most 100 characters")
         String location,
@@ -35,7 +31,9 @@ public record VacancyDto(
 
         String requirements,
 
-        String responsibilities
+        String responsibilities,
+
+        UUID createdBy
 ) 
     {
 }

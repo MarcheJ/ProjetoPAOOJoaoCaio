@@ -50,7 +50,6 @@ public class CandidateController implements GenericController {
     }
 
     // UPDATE (by id)
-    // Se fosse PATCH, iria atualizar parcialmente, PUT atualiza o item completo
     @PutMapping("{id}")
     public ResponseEntity<Void> updateCandidate(
             @PathVariable("id") String id, @RequestBody @Valid CandidateDto dto) {
@@ -58,8 +57,8 @@ public class CandidateController implements GenericController {
 
         boolean candidateUpdated = service.updateCandidate(candidateId, dto);
         return candidateUpdated
-                ? ResponseEntity.noContent().build() // foi atualizado
-                : ResponseEntity.notFound().build(); // não foi encontrado
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build(); 
     }
 
     // DELETE (by id)
